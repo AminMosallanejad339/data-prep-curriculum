@@ -4,27 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Data Preparation — Master Curriculum | Amin Mosallanejad</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌊%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%234fc3f7'/%3E%3C/svg%3E">
 <style>
   :root {
-    --bg-deep:      #02060f;
-    --bg-navy:      #071528;
-    --bg-blue:      #0d2b52;
-    --bg-cyan:      #0a3a4d;
-    --sun-warm:     #f6c453;
-    --sun-glow:     #ffb84d;
+    /* ===== NEW THEME: Logo (navy/cyan) → Brick Red ===== */
+    --bg-deep:      #0a0510;   /* deepest dark (top) */
+    --bg-navy:      #0d1b3a;   /* navy from logo */
+    --bg-blue:      #1a3a5c;   /* deep blue */
+    --bg-cyan:      #0e4a5f;   /* cyan from logo */
+    --bg-warm:      #5c2a1e;   /* warm transition */
+    --bg-brick:     #8b2f1e;   /* brick red */
+    --bg-brick-2:   #6b1f12;   /* deep brick (bottom) */
 
-    --line:         rgba(120, 200, 255, 0.14);
-    --line-hover:   rgba(120, 200, 255, 0.4);
+    --accent:       #4fc3f7;   /* cyan from logo */
+    --accent-2:     #00e5ff;
+    --brick:        #e85a3a;   /* brick red accent */
+    --brick-glow:   #ff6b4a;
+    --gold:         #f6c453;
     --txt:          #e6f1ff;
     --txt-dim:      #8ba7c7;
-    --accent:       #4fc3f7;
-    --accent-2:     #00e5ff;
-    --gold:         #f6c453;
+    --line:         rgba(120, 200, 255, 0.14);
+    --line-hover:   rgba(232, 90, 58, 0.4);
+
     --layer1:       #4fc3f7;
     --layer2:       #26c6a8;
-    --layer3:       #ff8a65;
+    --layer3:       #e85a3a;
     --layer4:       #b388ff;
+
     --radius:       14px;
     --shadow:       0 8px 32px rgba(0, 0, 0, 0.55);
   }
@@ -37,42 +43,58 @@
     color: var(--txt);
     line-height: 1.65;
     min-height: 100vh;
+    /* ===== THE GRADIENT: Logo navy/cyan → Brick Red ===== */
     background:
-      radial-gradient(ellipse at 50% 100%, rgba(246, 196, 83, 0.18) 0%, transparent 45%),
-      radial-gradient(ellipse at 15% 30%, rgba(10, 58, 77, 0.7) 0%, transparent 55%),
-      radial-gradient(ellipse at 85% 20%, rgba(13, 43, 82, 0.7) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 100%, rgba(232, 90, 58, 0.25) 0%, transparent 55%),
+      radial-gradient(ellipse at 15% 30%, rgba(14, 74, 95, 0.6) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 20%, rgba(26, 58, 92, 0.6) 0%, transparent 55%),
       linear-gradient(180deg,
         var(--bg-deep) 0%,
-        var(--bg-navy) 35%,
-        var(--bg-blue) 65%,
-        var(--bg-cyan) 85%,
-        #0a2a35 100%);
+        var(--bg-navy) 25%,
+        var(--bg-blue) 45%,
+        var(--bg-cyan) 62%,
+        var(--bg-warm) 80%,
+        var(--bg-brick) 92%,
+        var(--bg-brick-2) 100%);
     background-attachment: fixed;
     background-size: cover;
   }
 
+  /* Subtle brick glow at the bottom */
   body::before {
     content: '';
     position: fixed;
-    top: -10vh;
+    bottom: -20vh;
     left: 50%;
     transform: translateX(-50%);
     width: 140vw;
-    height: 140vw;
-    max-width: 1400px;
-    max-height: 1400px;
-    background: radial-gradient(circle,
-      rgba(246, 196, 83, 0.10) 0%,
-      rgba(246, 196, 83, 0.05) 25%,
-      transparent 55%);
+    height: 80vh;
+    max-width: 1600px;
+    background: radial-gradient(ellipse at center,
+      rgba(232, 90, 58, 0.15) 0%,
+      rgba(232, 90, 58, 0.05) 30%,
+      transparent 60%);
     pointer-events: none;
     z-index: 0;
-    animation: sunPulse 8s ease-in-out infinite;
+    animation: brickPulse 10s ease-in-out infinite;
   }
 
-  @keyframes sunPulse {
-    0%, 100% { opacity: 0.85; transform: translateX(-50%) scale(1); }
-    50%      { opacity: 1;    transform: translateX(-50%) scale(1.05); }
+  @keyframes brickPulse {
+    0%, 100% { opacity: 0.8; transform: translateX(-50%) scale(1); }
+    50%      { opacity: 1;   transform: translateX(-50%) scale(1.08); }
+  }
+
+  /* SVG icon utility */
+  .icon {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    vertical-align: middle;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   /* ---------- HEADER ---------- */
@@ -82,7 +104,7 @@
     padding: 3rem 1.5rem 2rem;
     text-align: center;
     border-bottom: 1px solid var(--line);
-    background: linear-gradient(180deg, rgba(2, 6, 15, 0.6), transparent);
+    background: linear-gradient(180deg, rgba(10, 5, 16, 0.6), transparent);
   }
 
   .logo-wrap {
@@ -91,7 +113,7 @@
     height: 150px;
     margin-bottom: 1rem;
     filter: drop-shadow(0 0 24px rgba(79, 195, 247, 0.35))
-            drop-shadow(0 0 48px rgba(246, 196, 83, 0.15));
+            drop-shadow(0 0 48px rgba(232, 90, 58, 0.2));
     animation: logoFloat 6s ease-in-out infinite;
   }
 
@@ -132,7 +154,7 @@
   }
 
   .tagline span {
-    color: var(--gold);
+    color: var(--brick);
     margin: 0 0.6rem;
     font-weight: 700;
   }
@@ -143,7 +165,7 @@
     top: 0;
     z-index: 100;
     padding: 1rem 1.5rem;
-    background: rgba(2, 6, 15, 0.88);
+    background: rgba(10, 5, 16, 0.88);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--line);
@@ -181,15 +203,16 @@
     background: rgba(10, 20, 40, 0.95);
   }
 
-  .search-box::before {
-    content: '🔍';
+  .search-box .search-icon {
     position: absolute;
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    opacity: 0.5;
+    color: var(--txt-dim);
+    opacity: 0.7;
     pointer-events: none;
-    font-size: 0.85rem;
+    width: 16px;
+    height: 16px;
   }
 
   .filter-btns {
@@ -221,6 +244,8 @@
     font-weight: 700;
   }
 
+  .filter-btn[data-layer="3"].active { background: var(--brick); border-color: var(--brick); }
+
   /* ---------- STATS ---------- */
   .stats {
     display: flex;
@@ -230,7 +255,7 @@
     font-size: 0.78rem;
     color: var(--txt-dim);
     border-bottom: 1px solid var(--line);
-    background: rgba(7, 21, 40, 0.5);
+    background: rgba(13, 27, 58, 0.5);
     flex-wrap: wrap;
     position: relative;
     z-index: 1;
@@ -251,7 +276,7 @@
     margin: 2.5rem 0 1.2rem;
     padding: 1rem 1.25rem;
     border-radius: var(--radius);
-    background: linear-gradient(90deg, rgba(13, 43, 82, 0.7), transparent);
+    background: linear-gradient(90deg, rgba(26, 58, 92, 0.7), transparent);
     border-left: 4px solid var(--accent);
     display: flex;
     align-items: center;
@@ -277,6 +302,7 @@
   .layer-1 .layer-header { border-color: var(--layer1); }
   .layer-2 .layer-header { border-color: var(--layer2); }
   .layer-3 .layer-header { border-color: var(--layer3); }
+  .layer-3 .layer-header { background: linear-gradient(90deg, rgba(139, 47, 30, 0.4), transparent); }
   .layer-4 .layer-header { border-color: var(--layer4); }
 
   /* ---------- ACCORDION ---------- */
@@ -285,7 +311,7 @@
     border: 1px solid var(--line);
     border-radius: var(--radius);
     overflow: hidden;
-    background: rgba(7, 21, 40, 0.55);
+    background: rgba(13, 27, 58, 0.55);
     backdrop-filter: blur(6px);
     transition: all 0.25s;
   }
@@ -295,9 +321,17 @@
   .section.open {
     border-color: var(--accent);
     box-shadow: 0 0 0 1px rgba(79, 195, 247, 0.2),
-                0 0 28px rgba(246, 196, 83, 0.08),
+                0 0 28px rgba(232, 90, 58, 0.12),
                 var(--shadow);
-    background: rgba(10, 27, 52, 0.85);
+    background: rgba(26, 45, 82, 0.85);
+  }
+
+  .layer-3 .section.open {
+    border-color: var(--brick);
+    box-shadow: 0 0 0 1px rgba(232, 90, 58, 0.25),
+                0 0 32px rgba(232, 90, 58, 0.15),
+                var(--shadow);
+    background: rgba(60, 25, 20, 0.5);
   }
 
   .section-head {
@@ -320,7 +354,7 @@
     place-items: center;
     font-weight: 700;
     font-size: 0.88rem;
-    background: rgba(13, 43, 82, 0.9);
+    background: rgba(26, 58, 92, 0.9);
     color: var(--accent);
     flex-shrink: 0;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
@@ -328,7 +362,11 @@
   }
 
   .layer-2 .section-num { color: var(--layer2); border-color: rgba(38, 198, 168, 0.2); }
-  .layer-3 .section-num { color: var(--layer3); border-color: rgba(255, 138, 101, 0.2); }
+  .layer-3 .section-num {
+    color: var(--brick);
+    border-color: rgba(232, 90, 58, 0.3);
+    background: rgba(90, 30, 20, 0.8);
+  }
   .layer-4 .section-num { color: var(--layer4); border-color: rgba(179, 136, 255, 0.2); }
 
   .section-title {
@@ -341,11 +379,16 @@
   .section-count {
     font-size: 0.72rem;
     color: var(--txt-dim);
-    background: rgba(13, 43, 82, 0.7);
+    background: rgba(26, 58, 92, 0.7);
     padding: 0.25rem 0.65rem;
     border-radius: 20px;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     border: 1px solid var(--line);
+  }
+
+  .layer-3 .section-count {
+    background: rgba(90, 30, 20, 0.5);
+    border-color: rgba(232, 90, 58, 0.2);
   }
 
   .chevron {
@@ -355,6 +398,7 @@
   }
 
   .section.open .chevron { transform: rotate(180deg); color: var(--accent); }
+  .layer-3 .section.open .chevron { color: var(--brick); }
 
   .section-body {
     max-height: 0;
@@ -388,6 +432,11 @@
     border-left-color: var(--accent);
   }
 
+  .layer-3 .sub-item:hover {
+    background: rgba(232, 90, 58, 0.08);
+    border-left-color: var(--brick);
+  }
+
   .sub-num {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 0.74rem;
@@ -396,6 +445,8 @@
     opacity: 0.75;
     flex-shrink: 0;
   }
+
+  .layer-3 .sub-num { color: var(--brick); }
 
   .sub-text { flex: 1; }
 
@@ -413,7 +464,7 @@
     padding: 1.5rem;
     border: 1px dashed var(--line-hover);
     border-radius: var(--radius);
-    background: rgba(7, 21, 40, 0.4);
+    background: rgba(13, 27, 58, 0.4);
     backdrop-filter: blur(6px);
     position: relative;
     z-index: 1;
@@ -438,7 +489,7 @@
   .cc-card {
     padding: 0.9rem 0.75rem;
     border-radius: 10px;
-    background: rgba(13, 43, 82, 0.5);
+    background: rgba(26, 58, 92, 0.5);
     border: 1px solid var(--line);
     text-align: center;
     transition: all 0.22s;
@@ -446,14 +497,24 @@
   }
 
   .cc-card:hover {
-    border-color: var(--accent);
+    border-color: var(--brick);
     transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(79, 195, 247, 0.15),
-                0 0 20px rgba(246, 196, 83, 0.08);
-    background: rgba(13, 43, 82, 0.8);
+    box-shadow: 0 8px 24px rgba(232, 90, 58, 0.15),
+                0 0 20px rgba(232, 90, 58, 0.1);
+    background: rgba(90, 30, 20, 0.4);
   }
 
-  .cc-icon { font-size: 1.4rem; display: block; margin-bottom: 0.35rem; }
+  .cc-icon {
+    display: block;
+    margin: 0 auto 0.45rem;
+    width: 26px;
+    height: 26px;
+    color: var(--accent);
+    transition: color 0.2s;
+  }
+
+  .cc-card:hover .cc-icon { color: var(--brick); }
+
   .cc-name { font-size: 0.88rem; font-weight: 600; color: var(--txt); letter-spacing: 0.02em; }
   .cc-refs {
     font-size: 0.68rem;
@@ -472,18 +533,17 @@
     font-size: 0.82rem;
     position: relative;
     z-index: 1;
-    background: linear-gradient(0deg, rgba(2, 6, 15, 0.7), transparent);
+    background: linear-gradient(0deg, rgba(10, 5, 16, 0.7), transparent);
     margin-top: 2rem;
   }
 
   footer .name {
     font-size: 1.5rem;
-    color: var(--accent);
     font-style: italic;
     margin-bottom: 0.4rem;
     font-weight: 600;
     letter-spacing: 0.05em;
-    background: linear-gradient(135deg, var(--accent), var(--gold));
+    background: linear-gradient(135deg, var(--accent), var(--brick));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -505,7 +565,14 @@
   }
 
   .no-results.show { display: block; }
-  .no-results .big { font-size: 2.5rem; margin-bottom: 0.5rem; opacity: 0.6; }
+  .no-results .big {
+    display: block;
+    margin: 0 auto 0.75rem;
+    width: 48px;
+    height: 48px;
+    color: var(--txt-dim);
+    opacity: 0.6;
+  }
 
   /* ---------- BACK TO TOP ---------- */
   .to-top {
@@ -515,7 +582,7 @@
     width: 46px;
     height: 46px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--sun-warm));
+    background: linear-gradient(135deg, var(--accent), var(--brick));
     color: var(--bg-deep);
     border: none;
     cursor: pointer;
@@ -523,7 +590,7 @@
     place-items: center;
     font-size: 1.15rem;
     font-weight: 700;
-    box-shadow: 0 4px 20px rgba(79, 195, 247, 0.4);
+    box-shadow: 0 4px 20px rgba(232, 90, 58, 0.4);
     opacity: 0;
     pointer-events: none;
     transition: all 0.3s;
@@ -533,7 +600,7 @@
   .to-top.show { opacity: 1; pointer-events: auto; }
   .to-top:hover {
     transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 6px 28px rgba(246, 196, 83, 0.5);
+    box-shadow: 0 6px 28px rgba(232, 90, 58, 0.6);
   }
 
   /* ---------- MOBILE ---------- */
@@ -585,20 +652,24 @@
      ============================================================ -->
 <div class="controls">
   <div class="search-box">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.3-4.3"></path>
+    </svg>
     <input type="text" id="search" placeholder="Search sections and sub-sections..." autocomplete="off">
   </div>
   <div class="filter-btns">
     <button class="filter-btn active" data-layer="all">All</button>
-    <button class="filter-btn" data-layer="1">🟦 Core</button>
-    <button class="filter-btn" data-layer="2">🟩 Specialized</button>
-    <button class="filter-btn" data-layer="3">🟥 Production</button>
-    <button class="filter-btn" data-layer="4">🟪 LLM</button>
+    <button class="filter-btn" data-layer="1">Core</button>
+    <button class="filter-btn" data-layer="2">Specialized</button>
+    <button class="filter-btn" data-layer="3">Production</button>
+    <button class="filter-btn" data-layer="4">LLM</button>
   </div>
 </div>
 
 <div class="stats">
   <span><strong id="stat-sections">41</strong> Sections</span>
-  <span><strong id="stat-subs">420</strong> Sub-sections</span>
+  <span><strong id="stat-subs">441</strong> Sub-sections</span>
   <span><strong>3</strong> Layers + <strong>1</strong> Optional</span>
   <span><strong>6</strong> Cross-cutting Concerns</span>
 </div>
@@ -606,7 +677,10 @@
 <main id="main"></main>
 
 <div class="no-results" id="noResults">
-  <div class="big">🔍</div>
+  <svg class="big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="8"></circle>
+    <path d="m21 21-4.3-4.3"></path>
+  </svg>
   <div>No results found</div>
 </div>
 
@@ -871,12 +945,12 @@ const CURRICULUM = [
 ];
 
 const CROSS_CUTTING = [
-  { icon: "🛡️", name: "Leakage",         refs: "1, 3, 21, 22, 24, 25, 26, 37" },
-  { icon: "🎲", name: "Sampling",        refs: "3, 9, 25, 32" },
-  { icon: "⏱️", name: "Temporal",        refs: "1-4, 3-7, 15-7, 21-7, 26" },
-  { icon: "👁️", name: "Observability",   refs: "12, 13, 33, 34" },
-  { icon: "⚖️", name: "Bias / Fairness", refs: "3, 18, 30, 32" },
-  { icon: "🔒", name: "Privacy",         refs: "2, 30, 31, 40" }
+  { svg: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',                       name: "Leakage",         refs: "1, 3, 21, 22, 24, 25, 26, 37" },
+  { svg: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="1.5"/><circle cx="16" cy="8" r="1.5"/><circle cx="8" cy="16" r="1.5"/><circle cx="16" cy="16" r="1.5"/>', name: "Sampling", refs: "3, 9, 25, 32" },
+  { svg: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',                        name: "Temporal",        refs: "1-4, 3-7, 15-7, 21-7, 26" },
+  { svg: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>', name: "Observability", refs: "12, 13, 33, 34" },
+  { svg: '<path d="M12 3v18"/><path d="M5 7h14"/><path d="M5 17h14"/><circle cx="5" cy="7" r="2"/><circle cx="19" cy="7" r="2"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/>', name: "Bias / Fairness", refs: "3, 18, 30, 32" },
+  { svg: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>', name: "Privacy", refs: "2, 30, 31, 40" }
 ];
 
 const LAYER_META = {
@@ -897,7 +971,7 @@ const toTop = document.getElementById('toTop');
 
 let currentFilter = 'all';
 let currentSearch = '';
-const STORAGE_KEY = 'dp-curriculum-open-v2';
+const STORAGE_KEY = 'dp-curriculum-open-v3';
 
 function loadOpenState() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
@@ -991,7 +1065,7 @@ function renderCrossCutting() {
   const grid = document.getElementById('ccGrid');
   grid.innerHTML = CROSS_CUTTING.map(cc => `
     <div class="cc-card" data-refs="${cc.refs}">
-      <span class="cc-icon">${cc.icon}</span>
+      <svg class="cc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${cc.svg}</svg>
       <div class="cc-name">${cc.name}</div>
       <div class="cc-refs">${cc.refs}</div>
     </div>
