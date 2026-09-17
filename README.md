@@ -1,4 +1,4 @@
-# 📘 Data Preparation — Master Curriculum
+#  Data Preparation — Master Curriculum
 
 **Author:** [Amin Mosallanejad](https://github.com/AminMosallanejad339)  
 **Version:** Final v1.0 · **Sections:** 41 · **Sub-sections:** ~420 · **Layers:** 3 + 1 Optional
