@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Preparation — Master Curriculum | Amin Mosallanejad</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌊%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg-deep:      #02060f;
+    --bg-navy:      #071528;
+    --bg-blue:      #0d2b52;
+    --bg-cyan:      #0a3a4d;
+    --sun-warm:     #f6c453;
+    --sun-glow:     #ffb84d;
+
+    --line:         rgba(120, 200, 255, 0.14);
+    --line-hover:   rgba(120, 200, 255, 0.4);
+    --txt:          #e6f1ff;
+    --txt-dim:      #8ba7c7;
+    --accent:       #4fc3f7;
+    --accent-2:     #00e5ff;
+    --gold:         #f6c453;
+    --layer1:       #4fc3f7;
+    --layer2:       #26c6a8;
+    --layer3:       #ff8a65;
+    --layer4:       #b388ff;
+    --radius:       14px;
+    --shadow:       0 8px 32px rgba(0, 0, 0, 0.55);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--txt);
+    line-height: 1.65;
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at 50% 100%, rgba(246, 196, 83, 0.18) 0%, transparent 45%),
+      radial-gradient(ellipse at 15% 30%, rgba(10, 58, 77, 0.7) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 20%, rgba(13, 43, 82, 0.7) 0%, transparent 55%),
+      linear-gradient(180deg,
+        var(--bg-deep) 0%,
+        var(--bg-navy) 35%,
+        var(--bg-blue) 65%,
+        var(--bg-cyan) 85%,
+        #0a2a35 100%);
+    background-attachment: fixed;
+    background-size: cover;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -10vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140vw;
+    height: 140vw;
+    max-width: 1400px;
+    max-height: 1400px;
+    background: radial-gradient(circle,
+      rgba(246, 196, 83, 0.10) 0%,
+      rgba(246, 196, 83, 0.05) 25%,
+      transparent 55%);
+    pointer-events: none;
+    z-index: 0;
+    animation: sunPulse 8s ease-in-out infinite;
+  }
+
+  @keyframes sunPulse {
+    0%, 100% { opacity: 0.85; transform: translateX(-50%) scale(1); }
+    50%      { opacity: 1;    transform: translateX(-50%) scale(1.05); }
+  }
+
+  /* ---------- HEADER ---------- */
+  header {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 1.5rem 2rem;
+    text-align: center;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(2, 6, 15, 0.6), transparent);
+  }
+
+  .logo-wrap {
+    display: inline-block;
+    width: 150px;
+    height: 150px;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 24px rgba(79, 195, 247, 0.35))
+            drop-shadow(0 0 48px rgba(246, 196, 83, 0.15));
+    animation: logoFloat 6s ease-in-out infinite;
+  }
+
+  @keyframes logoFloat {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+  }
+
+  .logo-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .brand-name {
+    font-size: 1.05rem;
+    letter-spacing: 0.55em;
+    color: var(--txt);
+    font-weight: 300;
+    margin-bottom: 0.9rem;
+    padding-left: 0.55em;
+  }
+
+  h1 {
+    font-size: 1.05rem;
+    letter-spacing: 0.35em;
+    font-weight: 400;
+    color: var(--txt-dim);
+    margin-bottom: 1.1rem;
+    padding-left: 0.35em;
+  }
+
+  .tagline {
+    font-size: 1rem;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+
+  .tagline span {
+    color: var(--gold);
+    margin: 0 0.6rem;
+    font-weight: 700;
+  }
+
+  /* ---------- CONTROLS ---------- */
+  .controls {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 1rem 1.5rem;
+    background: rgba(2, 6, 15, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .search-box {
+    flex: 1 1 280px;
+    max-width: 440px;
+    position: relative;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 0.7rem 1rem 0.7rem 2.6rem;
+    background: rgba(10, 20, 40, 0.7);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--txt);
+    font-size: 0.95rem;
+    font-family: inherit;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .search-box input::placeholder { color: var(--txt-dim); opacity: 0.6; }
+
+  .search-box input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.15);
+    background: rgba(10, 20, 40, 0.95);
+  }
+
+  .search-box::before {
+    content: '🔍';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.5;
+    pointer-events: none;
+    font-size: 0.85rem;
+  }
+
+  .filter-btns {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: 0.55rem 1rem;
+    background: rgba(10, 20, 40, 0.7);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--txt-dim);
+    font-size: 0.8rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+  }
+
+  .filter-btn:hover { border-color: var(--line-hover); color: var(--txt); }
+
+  .filter-btn.active {
+    background: var(--accent);
+    color: var(--bg-deep);
+    border-color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* ---------- STATS ---------- */
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 1.8rem;
+    padding: 0.75rem;
+    font-size: 0.78rem;
+    color: var(--txt-dim);
+    border-bottom: 1px solid var(--line);
+    background: rgba(7, 21, 40, 0.5);
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+
+  .stats strong { color: var(--accent); }
+
+  /* ---------- MAIN ---------- */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .layer-header {
+    margin: 2.5rem 0 1.2rem;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius);
+    background: linear-gradient(90deg, rgba(13, 43, 82, 0.7), transparent);
+    border-left: 4px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .layer-header h2 {
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .layer-header .range {
+    font-size: 0.78rem;
+    color: var(--txt-dim);
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  .layer-1 .layer-header { border-color: var(--layer1); }
+  .layer-2 .layer-header { border-color: var(--layer2); }
+  .layer-3 .layer-header { border-color: var(--layer3); }
+  .layer-4 .layer-header { border-color: var(--layer4); }
+
+  /* ---------- ACCORDION ---------- */
+  .section {
+    margin-bottom: 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: rgba(7, 21, 40, 0.55);
+    backdrop-filter: blur(6px);
+    transition: all 0.25s;
+  }
+
+  .section:hover { border-color: var(--line-hover); }
+
+  .section.open {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(79, 195, 247, 0.2),
+                0 0 28px rgba(246, 196, 83, 0.08),
+                var(--shadow);
+    background: rgba(10, 27, 52, 0.85);
+  }
+
+  .section-head {
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+  }
+
+  .section-head:hover { background: rgba(79, 195, 247, 0.05); }
+
+  .section-num {
+    min-width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 0.88rem;
+    background: rgba(13, 43, 82, 0.9);
+    color: var(--accent);
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    border: 1px solid rgba(79, 195, 247, 0.2);
+  }
+
+  .layer-2 .section-num { color: var(--layer2); border-color: rgba(38, 198, 168, 0.2); }
+  .layer-3 .section-num { color: var(--layer3); border-color: rgba(255, 138, 101, 0.2); }
+  .layer-4 .section-num { color: var(--layer4); border-color: rgba(179, 136, 255, 0.2); }
+
+  .section-title {
+    flex: 1;
+    font-size: 0.98rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .section-count {
+    font-size: 0.72rem;
+    color: var(--txt-dim);
+    background: rgba(13, 43, 82, 0.7);
+    padding: 0.25rem 0.65rem;
+    border-radius: 20px;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    border: 1px solid var(--line);
+  }
+
+  .chevron {
+    color: var(--txt-dim);
+    transition: transform 0.3s, color 0.3s;
+    font-size: 0.75rem;
+  }
+
+  .section.open .chevron { transform: rotate(180deg); color: var(--accent); }
+
+  .section-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    border-top: 0 solid var(--line);
+  }
+
+  .section.open .section-body {
+    max-height: 2500px;
+    border-top-width: 1px;
+  }
+
+  .sub-list { list-style: none; padding: 0.75rem 1rem; }
+
+  .sub-item {
+    padding: 0.55rem 0.85rem;
+    border-radius: 8px;
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+    font-size: 0.88rem;
+    color: var(--txt-dim);
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+  }
+
+  .sub-item:hover {
+    background: rgba(79, 195, 247, 0.06);
+    color: var(--txt);
+    border-left-color: var(--accent);
+  }
+
+  .sub-num {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.74rem;
+    color: var(--accent);
+    min-width: 52px;
+    opacity: 0.75;
+    flex-shrink: 0;
+  }
+
+  .sub-text { flex: 1; }
+
+  .cross-ref {
+    font-size: 0.72rem;
+    color: var(--gold);
+    opacity: 0.85;
+    font-style: italic;
+  }
+
+  /* ---------- CROSS-CUTTING ---------- */
+  .cross-cutting {
+    max-width: 1100px;
+    margin: 2rem auto 0;
+    padding: 1.5rem;
+    border: 1px dashed var(--line-hover);
+    border-radius: var(--radius);
+    background: rgba(7, 21, 40, 0.4);
+    backdrop-filter: blur(6px);
+    position: relative;
+    z-index: 1;
+  }
+
+  .cross-cutting h3 {
+    text-align: center;
+    font-size: 0.85rem;
+    letter-spacing: 0.4em;
+    color: var(--txt-dim);
+    margin-bottom: 1.25rem;
+    text-transform: uppercase;
+    padding-left: 0.4em;
+  }
+
+  .cc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .cc-card {
+    padding: 0.9rem 0.75rem;
+    border-radius: 10px;
+    background: rgba(13, 43, 82, 0.5);
+    border: 1px solid var(--line);
+    text-align: center;
+    transition: all 0.22s;
+    cursor: pointer;
+  }
+
+  .cc-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(79, 195, 247, 0.15),
+                0 0 20px rgba(246, 196, 83, 0.08);
+    background: rgba(13, 43, 82, 0.8);
+  }
+
+  .cc-icon { font-size: 1.4rem; display: block; margin-bottom: 0.35rem; }
+  .cc-name { font-size: 0.88rem; font-weight: 600; color: var(--txt); letter-spacing: 0.02em; }
+  .cc-refs {
+    font-size: 0.68rem;
+    color: var(--txt-dim);
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    margin-top: 0.25rem;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    border-top: 1px solid var(--line);
+    color: var(--txt-dim);
+    font-size: 0.82rem;
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(0deg, rgba(2, 6, 15, 0.7), transparent);
+    margin-top: 2rem;
+  }
+
+  footer .name {
+    font-size: 1.5rem;
+    color: var(--accent);
+    font-style: italic;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    background: linear-gradient(135deg, var(--accent), var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  footer .roles {
+    letter-spacing: 0.5em;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    padding-left: 0.5em;
+  }
+
+  /* ---------- NO RESULTS ---------- */
+  .no-results {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--txt-dim);
+    display: none;
+  }
+
+  .no-results.show { display: block; }
+  .no-results .big { font-size: 2.5rem; margin-bottom: 0.5rem; opacity: 0.6; }
+
+  /* ---------- BACK TO TOP ---------- */
+  .to-top {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--sun-warm));
+    color: var(--bg-deep);
+    border: none;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font-size: 1.15rem;
+    font-weight: 700;
+    box-shadow: 0 4px 20px rgba(79, 195, 247, 0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s;
+    z-index: 99;
+  }
+
+  .to-top.show { opacity: 1; pointer-events: auto; }
+  .to-top:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 28px rgba(246, 196, 83, 0.5);
+  }
+
+  /* ---------- MOBILE ---------- */
+  @media (max-width: 640px) {
+    header { padding: 2rem 1rem 1.5rem; }
+    .logo-wrap { width: 110px; height: 110px; }
+    .brand-name { font-size: 0.85rem; letter-spacing: 0.4em; }
+    h1 { font-size: 0.8rem; letter-spacing: 0.2em; }
+    .tagline { font-size: 0.88rem; }
+    .controls { padding: 0.75rem 1rem; }
+    .section-head { padding: 0.85rem 1rem; gap: 0.6rem; }
+    .section-num { min-width: 34px; height: 34px; font-size: 0.78rem; }
+    .section-title { font-size: 0.88rem; }
+    .section-count { display: none; }
+    .sub-item { font-size: 0.82rem; padding: 0.5rem 0.6rem; }
+    .sub-num { min-width: 44px; font-size: 0.68rem; }
+    .stats { gap: 1rem; font-size: 0.7rem; }
+  }
+
+  /* ---------- PRINT ---------- */
+  @media print {
+    body { background: white; color: black; }
+    body::before { display: none; }
+    .controls, .to-top, .stats { display: none; }
+    .section-body { max-height: none !important; }
+    .section { border: 1px solid #ccc; page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header>
+  <div class="logo-wrap">
+    <img src="logo.png" alt="Amin Mosallanejad Logo">
+  </div>
+
+  <div class="brand-name">A M I N &nbsp; M O S A L L A N E J A D</div>
+  <h1>DATA PREPARATION MASTER CURRICULUM</h1>
+  <div class="tagline">
+    Better Data <span>→</span> Better Models <span>→</span> Greater Impact
+  </div>
+</header>
+
+<!-- ============================================================
+     CONTROLS
+     ============================================================ -->
+<div class="controls">
+  <div class="search-box">
+    <input type="text" id="search" placeholder="Search sections and sub-sections..." autocomplete="off">
+  </div>
+  <div class="filter-btns">
+    <button class="filter-btn active" data-layer="all">All</button>
+    <button class="filter-btn" data-layer="1">🟦 Core</button>
+    <button class="filter-btn" data-layer="2">🟩 Specialized</button>
+    <button class="filter-btn" data-layer="3">🟥 Production</button>
+    <button class="filter-btn" data-layer="4">🟪 LLM</button>
+  </div>
+</div>
+
+<div class="stats">
+  <span><strong id="stat-sections">41</strong> Sections</span>
+  <span><strong id="stat-subs">420</strong> Sub-sections</span>
+  <span><strong>3</strong> Layers + <strong>1</strong> Optional</span>
+  <span><strong>6</strong> Cross-cutting Concerns</span>
+</div>
+
+<main id="main"></main>
+
+<div class="no-results" id="noResults">
+  <div class="big">🔍</div>
+  <div>No results found</div>
+</div>
+
+<div class="cross-cutting">
+  <h3>Cross-Cutting Concerns</h3>
+  <div class="cc-grid" id="ccGrid"></div>
+</div>
+
+<footer>
+  <div class="name">Amin Mosallanejad</div>
+  <div class="roles">Data • ML • MLOps</div>
+</footer>
+
+<button class="to-top" id="toTop" title="Back to top">↑</button>
+
+<script>
+/* ============================================================
+   DATA — Master Curriculum (Final v1.0)
+   ============================================================ */
+const CURRICULUM = [
+  { layer: 1, num: 1, title: "Data Leakage Fundamentals", subs: [
+    "What is Data Leakage & Why It Matters","Target Leakage","Train-Test Contamination",
+    "Temporal Leakage","Group Leakage","Preprocessing Leakage","Feature Engineering Leakage",
+    "Aggregation Leakage","Label Leakage","Leakage Detection Techniques",
+    "Point-in-time Correctness","Leakage Auditing Checklist",
+    "Early Awareness of Splitting Principles (Cross-ref to 24)"
+  ]},
+  { layer: 1, num: 2, title: "Data Collection", subs: [
+    "Defining Data Requirements","Identifying Data Sources","Planning Collection Strategy",
+    "Setting Collection Frequency","Choosing Collection Methods","Ensuring Data Relevance",
+    "Estimating Data Volume Needed","Addressing Privacy Concerns","Setting Collection Timeline",
+    "Documenting Collection Plan","Data Contracts Definition","Cost & Resource Estimation",
+    "Storage & Processing Budget Planning"
+  ]},
+  { layer: 1, num: 3, title: "Sampling & Dataset Construction", subs: [
+    "Random Sampling","Stratified Sampling","Systematic Sampling","Cluster Sampling",
+    "Reservoir Sampling","Importance Sampling","Temporal Sampling","Group Sampling",
+    "Sampling Bias & Selection Bias","Train/Test Population Alignment","Dataset Curation",
+    "Dataset-level Deduplication & Near-duplicate Detection","Contamination Checks"
+  ]},
+  { layer: 1, num: 4, title: "Data Acquisition", subs: [
+    "Accessing Internal Databases","Using Public Datasets","Purchasing External Data",
+    "Scraping Web Data","Collecting via APIs","Gathering Sensor / IoT Data",
+    "Conducting Surveys & Forms","Logging User Interactions","Handling Data Access Permissions",
+    "Verifying Data Ownership","Webhooks & Event-driven Collection","Change Data Capture (CDC)",
+    "Streaming Collection"
+  ]},
+  { layer: 1, num: 5, title: "Data Semantics & Metadata", subs: [
+    "Business vs Technical Metadata","Data Definitions & Semantic Types","Data Domains",
+    "Units & Measurement Semantics","Metadata Quality","Data Ownership & Stewardship",
+    "Metadata Discovery","Source-of-Truth Identification"
+  ]},
+  { layer: 1, num: 6, title: "Data Integration", subs: [
+    "Identifying Common Keys","Schema Matching","Handling Different Formats",
+    "Resolving Data Conflicts","Merging Multiple Sources","Joining Tables Efficiently",
+    "Handling Time Zone Differences","Unifying Units & Scales","Creating Master Dataset",
+    "Validating Integrated Data","Schema Evolution Management"
+  ]},
+  { layer: 1, num: 7, title: "Entity Resolution & Record Linkage", subs: [
+    "Exact Matching","Fuzzy Matching","Blocking & Indexing Strategies","Probabilistic Matching",
+    "Entity-level Deduplication","Entity Resolution","Record Linkage",
+    "Master Data Management (MDM)","Surrogate Keys","Slowly Changing Dimensions (SCD)",
+    "Golden Record Creation"
+  ]},
+  { layer: 1, num: 8, title: "Scalable / Big Data Processing", subs: [
+    "When Pandas Isn't Enough","Polars","Dask","Spark","Out-of-core Processing",
+    "Chunked Reading & Processing","Memory Optimization","Columnar Formats",
+    "Partitioning Strategies","Benchmarking & Profiling"
+  ]},
+  { layer: 1, num: 9, title: "Exploratory Data Analysis (EDA)", subs: [
+    "Dataset Shape & Dimensions","Data Types Inspection","Descriptive Statistics",
+    "Univariate Analysis","Bivariate Analysis","Multivariate Analysis","Correlation Analysis",
+    "Distribution Analysis","Class Balance Inspection","Documenting EDA Findings",
+    "Automated EDA","Data Drift Baseline","Visualization Best Practices"
+  ]},
+  { layer: 1, num: 10, title: "Data Cleaning", subs: [
+    "Removing Duplicates","Fixing Inconsistent Formats","Correcting Typos & Errors",
+    "Standardizing Categories","Handling Invalid Values","Cleaning Text Data",
+    "Fixing Date & Time Formats","Removing Irrelevant Columns","Standardizing Naming Conventions",
+    "Creating Cleaning Pipeline"
+  ]},
+  { layer: 1, num: 11, title: "Data Validation", subs: [
+    "Checking Data Types","Validating Value Ranges","Referential Integrity","Business Rules",
+    "Logical Inconsistencies","Cross-field Validation","Schema Validation","Completeness Checks",
+    "Consistency Checks","Validation Reports","Data Contracts Enforcement","Quality Dimensions Scoring"
+  ]},
+  { layer: 1, num: 12, title: "Data Profiling", subs: [
+    "Column-level Profiling","Table-level Profiling","Distribution Profiling",
+    "Pattern & Format Profiling","Cross-column Dependency","Temporal Profiling",
+    "Profiling Tools","Profiling Reports & Baselines","Profiling for Anomaly Detection",
+    "Continuous Profiling"
+  ]},
+  { layer: 1, num: 13, title: "Data Quality Framework", subs: [
+    "Accuracy Metrics","Completeness Metrics","Consistency Metrics","Timeliness Metrics",
+    "Validity Metrics","Uniqueness Metrics","Quality Scorecards","Root Cause Analysis",
+    "Quality Monitoring Dashboards","Quality Improvement Feedback Loop"
+  ]},
+  { layer: 1, num: 14, title: "Missing Value Handling", subs: [
+    "Identifying Missing Patterns","Missing Mechanisms (MCAR, MAR, MNAR)","Deleting Rows / Columns",
+    "Mean / Median / Mode Imputation","Forward / Backward Fill","Interpolation",
+    "Model-based Imputation","Multiple Imputation","Indicator Variables",
+    "Evaluating Imputation Impact","Iterative Approach with Outliers"
+  ]},
+  { layer: 1, num: 15, title: "Outlier Detection", subs: [
+    "Statistical Methods","Visualization Methods","Distance-based Methods","Density-based Methods",
+    "Model-based Detection","Multivariate Outlier Detection","Time-series Outlier Detection",
+    "Domain-specific Rules","Ranking Severity","Documenting Outliers"
+  ]},
+  { layer: 1, num: 16, title: "Outlier Treatment", subs: [
+    "Removing Outliers","Capping / Winsorizing","Transformation Methods","Binning Extreme Values",
+    "Treating as Missing","Separate Modeling","Robust Scaling","Domain-informed Correction",
+    "Evaluating Treatment Impact","Keep vs Treat Strategy","Re-checking Missing Values"
+  ]},
+  { layer: 1, num: 17, title: "Noise Reduction", subs: [
+    "Identifying Noise Sources","Smoothing Techniques","Filtering Methods",
+    "Moving Average / Rolling Window","Wavelet Denoising","Frequency Domain Filtering",
+    "Robust Statistical Methods","Feature-level Noise Handling","Label Noise Detection",
+    "Measuring Noise Reduction Effect"
+  ]},
+  { layer: 1, num: 18, title: "Label Quality & Annotation", subs: [
+    "Labeling Guidelines","Manual Annotation Workflows","Inter-Annotator Agreement",
+    "Crowdsourcing Quality Control","Weak Supervision","Active Learning","Semi-supervised Labeling",
+    "Label Noise Detection & Correction","Label Distribution Analysis","Label Versioning",
+    "Human-in-the-loop","Multi-annotator Consensus"
+  ]},
+  { layer: 1, num: 19, title: "Data Transformation (ML-Centric)", subs: [
+    "Type Conversion","Normalization","Standardization","Log / Box-Cox / Yeo-Johnson",
+    "Label Encoding","One-Hot Encoding","Ordinal Encoding","Target Encoding",
+    "Discretization / Binning","Custom Transformers & Pipelines"
+  ]},
+  { layer: 1, num: 20, title: "Data Transformation (Data-Engineering-Centric)", subs: [
+    "Reshaping","Aggregation","Join Transformations","Window Operations",
+    "JSON / Nested Normalization","Semi-structured Data","SQL-based Transformations",
+    "Flattening Hierarchies","Array / List Handling","Documenting DE Transformations"
+  ]},
+  { layer: 1, num: 21, title: "Feature Engineering", subs: [
+    "Domain-driven Features","Date / Time Features","Text Features","Interaction Features",
+    "Polynomial Features","Aggregation Features","Lag & Rolling Features",
+    "Binning-based Features","Feature Extraction","Documenting Feature Engineering",
+    "Leakage-aware Feature Creation (Cross-ref to 1 & 24)"
+  ]},
+  { layer: 1, num: 22, title: "Feature Selection", subs: [
+    "Filter Methods","Wrapper Methods","Embedded Methods","Regularization-based",
+    "Stability Selection","Domain-informed Selection","Multicollinearity (VIF)",
+    "Evaluating Impact","Documenting Selected Features","Leakage-aware Selection"
+  ]},
+  { layer: 1, num: 23, title: "Dimensionality Reduction & Representation Learning", subs: [
+    "PCA","Truncated SVD","Factor Analysis","ICA","LDA (Supervised)","UMAP","t-SNE",
+    "Autoencoders","Evaluating Reduction Impact","Documenting Strategy"
+  ]},
+  { layer: 1, num: 24, title: "Data Splitting", subs: [
+    "Train / Validation / Test Split","Stratified Split","Group-based Split","Time-series Split",
+    "K-Fold Cross-Validation","Stratified K-Fold","Leave-One-Out / Leave-P-Out",
+    "Nested Cross-Validation","Data Leakage Prevention","Documenting Split Strategy",
+    "Leakage Auditing Checklist","Split Testing & Validation"
+  ]},
+  { layer: 1, num: 25, title: "Imbalance Handling", subs: [
+    "Detecting Class Imbalance","Random Undersampling","Random Oversampling",
+    "SMOTE / ADASYN / Borderline-SMOTE","Tomek Links / ENN","Class Weight Adjustment",
+    "Threshold Moving","Ensemble Methods","Evaluating Impact","Documenting Strategy",
+    "Apply Only on Train Set"
+  ]},
+
+  { layer: 2, num: 26, title: "Time-series Specific Preparation", subs: [
+    "Timestamp Indexing & Resampling","Seasonality Handling","Stationarity Testing (ADF, KPSS)",
+    "Detrending & Differencing","Missing Values in Time-series","Time-series Outlier Treatment",
+    "Lag & Window Features","Fourier & Calendar Features","Time-series Cross-Validation",
+    "Temporal Leakage Prevention (Cross-ref to 1-4)"
+  ]},
+  { layer: 2, num: 27, title: "Multimodal & Unstructured Data Preparation", subs: [
+    "Image Preprocessing","Audio Preprocessing","Video Preprocessing","Text Preprocessing",
+    "Embedding Extraction (CLIP, Whisper, BERT)","Modality Alignment",
+    "Multimodal Fusion Strategies","Handling Missing Modalities",
+    "Storage & Format Optimization","Documenting Multimodal Prep"
+  ]},
+  { layer: 2, num: 28, title: "Graph / Network Data Preparation", subs: [
+    "Node & Edge Definition","Graph Construction from Tabular Data","Graph Cleaning & Deduplication",
+    "Node Feature Engineering","Edge Feature Engineering","Graph Sampling & Subgraph Extraction",
+    "Handling Dynamic Graphs","Graph Splitting","Graph Libraries (NetworkX, PyG, DGL)",
+    "Documenting Graph Prep"
+  ]},
+  { layer: 2, num: 29, title: "Geospatial Data Preparation", subs: [
+    "Coordinate Systems & CRS Handling","Geocoding & Reverse Geocoding","Spatial Joins",
+    "Distance & Proximity Features","Spatial Aggregation","Handling Invalid Geometries",
+    "Raster vs Vector Data","Map Projections","Geospatial Libraries (GeoPandas, Shapely, Rasterio)",
+    "Documenting Geospatial Prep"
+  ]},
+
+  { layer: 3, num: 30, title: "Synthetic Data Generation", subs: [
+    "When to Use Synthetic Data","Statistical Generation (CTGAN, TVAE)","Rule-based Generation",
+    "Data Augmentation Techniques","Privacy-preserving Synthesis","Fidelity vs Utility Trade-off",
+    "Evaluating Synthetic Data Quality","Mixing Real & Synthetic Data","Bias in Synthetic Data",
+    "Documenting Synthetic Data Usage"
+  ]},
+  { layer: 3, num: 31, title: "Data Privacy & Compliance", subs: [
+    "GDPR Compliance","CCPA / CPRA Compliance","HIPAA","Anonymization Techniques",
+    "Pseudonymization","Differential Privacy","K-Anonymity / L-Diversity / T-Closeness",
+    "Data Masking & Tokenization","Consent Management","Privacy Impact Assessment"
+  ]},
+  { layer: 3, num: 32, title: "Bias & Fairness in Data", subs: [
+    "Types of Bias","Detecting Bias in Features","Detecting Bias in Labels",
+    "Protected Attributes Identification","Fairness Metrics","Bias Mitigation (Pre-processing)",
+    "Reweighing & Resampling","Fairness Auditing Tools (AIF360, Fairlearn)",
+    "Documenting Bias Assessment","Ethical Review Checklist"
+  ]},
+  { layer: 3, num: 33, title: "Data Drift & Concept Drift Detection", subs: [
+    "Types of Drift","Statistical Drift Tests (KS, PSI, Chi-square)","Window-based Drift Detection",
+    "Drift Monitoring Setup","Alerts & Thresholds","Retraining Triggers","Drift Visualization",
+    "Tools (Evidently, NannyML)","Documenting Drift Events","Drift Response Playbook"
+  ]},
+  { layer: 3, num: 34, title: "Data Observability", subs: [
+    "Freshness Monitoring","Volume Monitoring","Distribution Monitoring","Schema Monitoring",
+    "Lineage Observability","Quality Observability","Anomaly Detection in Production",
+    "Incident Detection & Alerting","SLA / SLO Definition","Root Cause Analysis",
+    "Data Observability Tools (Monte Carlo, Soda, GE)"
+  ]},
+  { layer: 3, num: 35, title: "Data Documentation", subs: [
+    "Creating Data Dictionary","Documenting Data Sources","Recording Collection Methods",
+    "Describing Cleaning Steps","Noting Transformations Applied","Logging Missing Value Strategies",
+    "Documenting Outlier Decisions","Versioning Datasets","Writing Data Quality Report",
+    "Maintaining Update History"
+  ]},
+  { layer: 3, num: 36, title: "Data Versioning & Lineage", subs: [
+    "Dataset Versioning (DVC, LakeFS, Delta Lake)","Data Lineage Tracking",
+    "Transformation Graph Documentation","Reproducibility of Data Pipelines",
+    "Snapshot Management","Rollback Strategies","Metadata Management",
+    "Catalog Tools (DataHub, Amundsen)","Audit Trails","Compliance & Retention Policies"
+  ]},
+  { layer: 3, num: 37, title: "Feature Store & Feature Serving", subs: [
+    "Feature Store Concepts (Online vs Offline)","Feature Definitions & Registry",
+    "Feast / Tecton / Hopsworks","Feature Versioning","Point-in-time Correctness",
+    "Online Serving (Low-latency)","Offline Serving (Batch)","Train-Serve Consistency",
+    "Feature Monitoring","Documenting Feature Store Usage"
+  ]},
+  { layer: 3, num: 38, title: "End-to-End Data Pipeline & Automation", subs: [
+    "Pipeline Design Principles","sklearn Pipeline","Pandas Pipeline / Method Chaining",
+    "Kedro for Structured Pipelines","Airflow for Orchestration","Prefect / Dagster",
+    "Scheduling & Triggers","Error Handling & Retries",
+    "Pipeline Testing (Unit, Integration, Property-based)","CI/CD for Data Pipelines"
+  ]},
+  { layer: 3, num: 39, title: "Data Saving, Containerization & Reproducibility", subs: [
+    "Saving Clean Dataset (CSV, Parquet)","Saving Transformers (joblib, pickle)",
+    "Saving Pipelines (sklearn Pipeline)","Saving Feature Metadata","Saving Split Indices",
+    "Environment & Dependency Locking","Random Seed Management","Containerization (Docker)",
+    "Infrastructure as Code (Terraform, Ansible)","Reproducibility Checklist",
+    "Handoff Documentation for Modeling"
+  ]},
+  { layer: 3, num: 40, title: "Data Governance & Ethics", subs: [
+    "Data Ownership & Stewardship","Data Access Control","Data Retention Policies",
+    "Ethical Data Use Guidelines","Bias Auditing Framework","Transparency & Explainability",
+    "Regulatory Compliance Matrix","Incident Response Plan","Stakeholder Communication",
+    "Governance Review Cycle"
+  ]},
+
+  { layer: 4, num: 41, title: "AI / LLM Dataset Preparation", subs: [
+    "Document Collection & Filtering","Language Identification","Document Deduplication",
+    "Near-duplicate Detection","PII Detection & Redaction","Quality Filtering",
+    "Toxic / Unsafe Content Filtering","Document Structure Extraction","Chunking Strategies",
+    "Metadata Enrichment","Dataset Mixture Design","Train/Eval Contamination Prevention",
+    "Synthetic Data Mixing","Preference / Instruction Data Preparation"
+  ]}
+];
+
+const CROSS_CUTTING = [
+  { icon: "🛡️", name: "Leakage",         refs: "1, 3, 21, 22, 24, 25, 26, 37" },
+  { icon: "🎲", name: "Sampling",        refs: "3, 9, 25, 32" },
+  { icon: "⏱️", name: "Temporal",        refs: "1-4, 3-7, 15-7, 21-7, 26" },
+  { icon: "👁️", name: "Observability",   refs: "12, 13, 33, 34" },
+  { icon: "⚖️", name: "Bias / Fairness", refs: "3, 18, 30, 32" },
+  { icon: "🔒", name: "Privacy",         refs: "2, 30, 31, 40" }
+];
+
+const LAYER_META = {
+  1: { label: "Layer 1 — Core Data Preparation",                range: "Sections 1 – 25", color: "layer-1" },
+  2: { label: "Layer 2 — Specialized Data Preparation",         range: "Sections 26 – 29", color: "layer-2" },
+  3: { label: "Layer 3 — Production, Governance & MLOps",       range: "Sections 30 – 40", color: "layer-3" },
+  4: { label: "Optional — AI / LLM Era Specialization",         range: "Section 41",       color: "layer-4" }
+};
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+const main = document.getElementById('main');
+const noResults = document.getElementById('noResults');
+const searchInput = document.getElementById('search');
+const filterBtns = document.querySelectorAll('.filter-btn');
+const toTop = document.getElementById('toTop');
+
+let currentFilter = 'all';
+let currentSearch = '';
+const STORAGE_KEY = 'dp-curriculum-open-v2';
+
+function loadOpenState() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+  catch { return {}; }
+}
+function saveOpenState(state) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+}
+let openState = loadOpenState();
+
+function render() {
+  const grouped = { 1: [], 2: [], 3: [], 4: [] };
+  CURRICULUM.forEach(s => grouped[s.layer].push(s));
+
+  let totalSubs = 0;
+  let visibleCount = 0;
+  let html = '';
+
+  [1, 2, 3, 4].forEach(layer => {
+    const sections = grouped[layer];
+    const visibleSections = sections.filter(s => {
+      const matchesFilter = currentFilter === 'all' || currentFilter === String(layer);
+      if (!matchesFilter) return false;
+      if (!currentSearch) return true;
+      const q = currentSearch.toLowerCase();
+      return s.title.toLowerCase().includes(q) ||
+        s.subs.some(sub => sub.toLowerCase().includes(q));
+    });
+
+    if (visibleSections.length === 0) return;
+
+    const meta = LAYER_META[layer];
+    html += `<div class="${meta.color}">`;
+    html += `<div class="layer-header">
+      <h2>${meta.label}</h2>
+      <span class="range">${meta.range}</span>
+    </div>`;
+
+    visibleSections.forEach(sec => {
+      const id = `sec-${sec.num}`;
+      const isOpen = openState[id] || currentSearch.length > 0;
+      const subsHtml = sec.subs.map((sub, i) => {
+        let subText = sub;
+        let crossRef = '';
+        const m = sub.match(/^(.*?)\s*\((Cross-ref[^)]*)\)\s*$/);
+        if (m) { subText = m[1]; crossRef = `<span class="cross-ref">(${m[2]})</span>`; }
+        return `<li class="sub-item">
+          <span class="sub-num">${sec.num}-${i + 1}</span>
+          <span class="sub-text">${subText} ${crossRef}</span>
+        </li>`;
+      }).join('');
+
+      html += `
+        <div class="section ${isOpen ? 'open' : ''}" id="${id}">
+          <div class="section-head" data-target="${id}">
+            <div class="section-num">${sec.num}</div>
+            <div class="section-title">${sec.title}</div>
+            <div class="section-count">${sec.subs.length} sub</div>
+            <div class="chevron">▼</div>
+          </div>
+          <div class="section-body">
+            <ul class="sub-list">${subsHtml}</ul>
+          </div>
+        </div>
+      `;
+      totalSubs += sec.subs.length;
+      visibleCount++;
+    });
+
+    html += `</div>`;
+  });
+
+  main.innerHTML = html;
+  noResults.classList.toggle('show', visibleCount === 0);
+
+  document.getElementById('stat-sections').textContent = visibleCount;
+  document.getElementById('stat-subs').textContent = totalSubs;
+
+  main.querySelectorAll('.section-head').forEach(head => {
+    head.addEventListener('click', () => {
+      const id = head.dataset.target;
+      const section = document.getElementById(id);
+      section.classList.toggle('open');
+      openState[id] = section.classList.contains('open');
+      saveOpenState(openState);
+    });
+  });
+}
+
+function renderCrossCutting() {
+  const grid = document.getElementById('ccGrid');
+  grid.innerHTML = CROSS_CUTTING.map(cc => `
+    <div class="cc-card" data-refs="${cc.refs}">
+      <span class="cc-icon">${cc.icon}</span>
+      <div class="cc-name">${cc.name}</div>
+      <div class="cc-refs">${cc.refs}</div>
+    </div>
+  `).join('');
+
+  grid.querySelectorAll('.cc-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const refs = card.dataset.refs;
+      const first = refs.split(',')[0].trim().split('-')[0];
+      searchInput.value = '';
+      currentSearch = '';
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('[data-layer="all"]').classList.add('active');
+      currentFilter = 'all';
+      render();
+      setTimeout(() => {
+        const el = document.getElementById(`sec-${first}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.classList.add('open');
+          openState[`sec-${first}`] = true;
+          saveOpenState(openState);
+        }
+      }, 100);
+    });
+  });
+}
+
+/* ============================================================
+   EVENTS
+   ============================================================ */
+searchInput.addEventListener('input', e => {
+  currentSearch = e.target.value.trim();
+  render();
+});
+
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.layer;
+    render();
+  });
+});
+
+window.addEventListener('scroll', () => {
+  toTop.classList.toggle('show', window.scrollY > 400);
+});
+
+toTop.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    e.preventDefault();
+    searchInput.focus();
+  }
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+render();
+renderCrossCutting();
+</script>
+
+</body>
+</html>
