@@ -5,14 +5,14 @@
 
 ---
 
-## 🎯 Overview
+## Overview
 
 A comprehensive, production-grade curriculum for **Data Preparation** — 
 from foundational concepts to advanced, specialized, and MLOps-grade topics.
 
 Built as a **reference** for Data Scientists, ML Engineers, and Data Engineers.
 
-🌐 **[→ View Interactive Version](https://aminmosallanejad339.github.io/data-prep-curriculum/)**
+ **[→ View Interactive Version](https://aminmosallanejad339.github.io/data-prep-curriculum/)**
 
 ![Data Preparation Master Curriculum](poster.png)
 
